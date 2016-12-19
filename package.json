@@ -1,0 +1,18 @@
+{
+  "name": "laika-says",
+  "version": "0.1.0",
+  "description": "Laika sending some notification mails on behalf of the MIRA Jeugdkern governance",
+  "main": "index.js",
+  "dependencies": {
+    "google-auth-library": "^0.9.10",
+    "googleapis": "^15.0.0",
+    "parse-authors": "^0.2.4",
+    "minimist": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vincent Ceulemans",
+  "license": "MIT"
+}
