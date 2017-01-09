@@ -106,7 +106,7 @@ function doMain(auth) {
     var now = new Date();
     
     var year = now.getFullYear();
-    var month = now.getMonth()+1;
+    var month= ("0" + (now.getMonth()+1) ).slice(-2);
     console.log(`Laika is searching for ${year}/${month}`);
     
     readAttendenceFile(
