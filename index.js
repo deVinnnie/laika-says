@@ -98,6 +98,12 @@ function readAttendenceFile(year, month, callback){
     });
 }
 
+function generateToken(){
+    const buffer = require('crypto').randomBytes(12);
+    var token = buffer.toString('hex');
+    return token;
+}
+
 /**
 * Does the very important stuff.
 *
@@ -108,17 +114,27 @@ function doMain(auth) {
     var year = now.getFullYear();
     var month= ("0" + (now.getMonth()+1) ).slice(-2);
     console.log(`Laika is searching for ${year}/${month}`);
+
+    console.log(`Laika is writing a config file to ~/bin/config.json`);
+    let config = {
+        "event" : `${year}-${month}`,
+        "token" : generateToken()
+    }
+    var json = JSON.stringify(config);
+    fs.writeFile(BASE_DIR+'/bin/config.json', json, 'utf8', function(){});
     
     readAttendenceFile(
         year, month,
         (toBeNotified) => {
             var leiding = readMailAddresses();
-
+    
             for (var i = 0; i < toBeNotified.length; i++) {
                 var notifee = toBeNotified[i];
                 var email = leiding[notifee].email;
                 var activiteit = `${year}-${month}`;
-                var message = `Laika zag dat je jouw aanwezigheid voor ${activiteit} nog niet ingevuld hebt! Vergeet dit niet te doen.`
+                var message = `Laika zag dat je jouw aanwezigheid voor ${activiteit} nog niet ingevuld hebt! Vergeet dit niet te doen.\n`
+                message += `[Aanwezig](http://laika-attendance.now.sh/${notifee}?state=confirmed&token=${config.token})\n`
+                message += `[Niet Aanwezig](http://laika-attendance.now.sh/${notifee}?state=absent&token=${config.token})\n`
                 
                 mail.sendMessage(auth, MAILER, email, message);
             }

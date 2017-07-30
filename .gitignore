@@ -1,3 +1,6 @@
 client_secret.json
 run.sh
 node_modules/
+
+# Don't make it complicated
+package-lock.json
