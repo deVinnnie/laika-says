@@ -4,3 +4,5 @@ node_modules/
 
 # Don't make it complicated
 package-lock.json
+
+.idea
