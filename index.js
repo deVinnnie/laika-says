@@ -6,7 +6,7 @@ var token = require('./token.js');
 var mail = require('./mail.js');
 var argv = require('minimist')(process.argv.slice(2));
 
-var BASE_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/MIRA/MIRA_Jeugdkern/Main";
+var BASE_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/MIRA_Jeugdkern/Main";
 
 var ATTENDENCE_ROOT_DIR = BASE_DIR + '/Activiteiten_Main_Sequence'; 
 var MAILER = argv['email'];
@@ -31,19 +31,15 @@ token.authorize(JSON.parse(content), doMain);
 function readMailAddresses(){
     var content = fs.readFileSync(BASE_DIR + '/LEIDING', 'utf-8');
     var leiding = authors(content);
-    var map = {};
-    
+
     // Convert the 'url' field to 'nick' field.
-    for (var i = 0; i < leiding.length; i++) {
-        var l = leiding[i];
-        var nick = l.url;
-        
-        map[nick] = {
+    return new Map(leiding.map(l => [
+        l.url,
+        {
             name: l.name,
             email: l.email
-        };
-    }
-    return map;
+        }
+    ]));
 }
 
 /**
@@ -70,7 +66,7 @@ function readAttendenceFile(year, month, callback){
         {input: fs.createReadStream(fileName)}
     );
     
-    lineReader.on('close', function(){
+    lineReader.on('close', () => {
         if(toBeNotified.length === 0){
             console.log("Everybody filled in his or hers attendance. It's a miracle!");
         }
@@ -122,18 +118,15 @@ function doMain(auth) {
     readAttendenceFile(
         year, month,
         (toBeNotified) => {
-            var leiding = readMailAddresses();
-    
-            for (var i = 0; i < toBeNotified.length; i++) {
-                var notifee = toBeNotified[i];
-                var email = leiding[notifee].email;
+            toBeNotified.forEach((notifee) => {
+                var email = leiding.get(notifee).email;
                 var activiteit = `${year}-${month}`;
                 var message = `Laika zag dat je jouw aanwezigheid voor ${activiteit} nog niet ingevuld hebt! Vergeet dit niet te doen.\n`
                 message += `[Aanwezig](http://laika-attendance.now.sh/${notifee}?state=confirmed&token=${config.token})\n`
                 message += `[Niet Aanwezig](http://laika-attendance.now.sh/${notifee}?state=absent&token=${config.token})\n`
                 
                 mail.sendMessage(auth, MAILER, email, message);
-            }
+            });
         }
     );
 }
