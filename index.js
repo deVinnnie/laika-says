@@ -13,15 +13,13 @@ var MAILER = argv['email'];
 
 console.log(`Laika is using ${MAILER} to send emails.`);
 
+var leiding = readMailAddresses();
+
 // Load client secrets from a local file.
-fs.readFile('client_secret.json', (err, content) => {
-    if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-    }
-    // Authorize a client with the loaded credentials, then call the main method.
-    token.authorize(JSON.parse(content), doMain);
-});
+let content = fs.readFileSync('client_secret.json');
+
+// Authorize a client with the loaded credentials, then call the main method.
+token.authorize(JSON.parse(content), doMain);
 
 /**
 * Parse the LEIDING file - which has the same format as an AUTHORS file.
@@ -69,9 +67,7 @@ function readAttendenceFile(year, month, callback){
     var toBeNotified = [];
     
     var lineReader = readline.createInterface(
-        {
-            input: fs.createReadStream(fileName)
-        }
+        {input: fs.createReadStream(fileName)}
     );
     
     lineReader.on('close', function(){

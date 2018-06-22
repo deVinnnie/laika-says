@@ -1,4 +1,4 @@
-var google = require('googleapis');
+var {google} = require('googleapis');
 
 function makeBody(to, from, subject, message) {
     var str = ["Content-Type: text/plain; charset=\"UTF-8\"\n",
@@ -16,11 +16,11 @@ function makeBody(to, from, subject, message) {
 }
 
 exports.sendMessage = function(auth, sender, toEmail, message){
-    var gmail = google.gmail('v1');
+    const gmail = google.gmail({version: 'v1', auth});
     var raw = makeBody(toEmail, sender,
                        '[MIRA Jeugdkern] Laika Says Notificatie',
                         message);
-                
+
     console.log(`Sending mail from ${sender} -> ${toEmail}`);
 
     gmail.users.messages.send({

@@ -4,8 +4,8 @@
   "description": "Laika sending some notification mails on behalf of the MIRA Jeugdkern governance",
   "main": "index.js",
   "dependencies": {
-    "google-auth-library": "^0.9.10",
-    "googleapis": "^15.0.0",
+    "google-auth-library": "^1.6.1",
+    "googleapis": "^32.0.0",
     "parse-authors": "^0.2.4",
     "minimist": "*"
   },
